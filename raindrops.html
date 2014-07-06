@@ -1,0 +1,90 @@
+<html>
+<head>
+	<title>Raindrops</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<style type="text/css">
+	body {
+		background-color:black;
+	}
+	</style>
+</head>
+<body>
+
+	<svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+
+	<script>
+
+	var counter = 1;
+	var circles = {};
+
+	//create an SVG element
+	function makeSVG(tag, attrs) {
+        var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (k in attrs)
+        {
+            el.setAttribute(k, attrs[k]);
+        }
+        return el;
+    }
+
+    //draws a circle
+	function createCircle(cx,cy,r)
+	{
+		var circle = makeSVG('circle', 
+			{ cx: cx,
+			  cy: cy,
+			  r:  r,
+			  id: 'circle_'+counter,
+			  style: "fill: white"
+			});
+
+		//the key will be the HTML id and the value will be the radius
+		circles['circle_'+counter] = { radius: r };
+
+		counter++;
+		document.getElementById('svg').appendChild(circle);
+	}
+
+	//go through all the circles and update its radius and background color
+	function updateCircles()
+	{
+		for(circle in circles)
+		{
+			var el = document.getElementById(circle);
+			var color = 200-parseInt(circles[circle].radius/30*200);
+			var grr = 200;
+			// var colorR = Math.floor(Math.random()*255+1);
+			// var colorG = Math.floor(Math.random()*255+1);
+			// var colorB = Math.floor(Math.random()*255+1);
+			circles[circle].radius = circles[circle].radius+1;
+
+			//update the radius and the background color
+			el.setAttribute("r", circles[circle].radius);
+			el.setAttribute("style", "fill: rgb("+color+","+color+","+color+"); ");
+
+			//if the circle radius is greater than 80, remove the dom and remove its value in the circles variable/object
+			if(circles[circle].radius > 60)
+			{
+				document.getElementById('svg').removeChild(el);
+				delete circles[circle];
+			}
+		}
+	}
+
+	//main loop
+	function mainLoop()
+    {
+    	//create a new circle of radius 15 every time the loop is run
+    	createCircle(Math.random()*document.body.clientWidth, Math.random()*document.body.clientHeight, 15);
+    	
+    	//update the circle size and background color
+    	updateCircles();	
+    }
+	
+	//execute the mainLoop funtion every 30 milliseconds
+	setInterval(mainLoop, 30);
+
+	</script>
+
+</body>
+</html>
